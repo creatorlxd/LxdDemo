@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright 2018 creatorlxd
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,7 @@ namespace SpaceGameEngine
 	{
 	public:
 		virtual ~GlobalVariableTagClass();
-	
+
 		friend class GlobalVariableManager;
 	private:
 		virtual void Release();
@@ -34,7 +34,7 @@ namespace SpaceGameEngine
 		friend GlobalVariableManager& GetGlobalVariableManager();
 		~GlobalVariableManager();
 
-		template<typename T,typename AllocatorInterface>
+		template<typename T, typename AllocatorInterface>
 		friend class GlobalVariable;
 	private:
 		GlobalVariableManager();
@@ -54,7 +54,7 @@ namespace SpaceGameEngine
 		template<typename... Arg>
 		GlobalVariable(Arg&&... arg)
 		{
-			m_pContent = AllocatorInterface::New<T>(std::forward<Arg>(arg)...);
+			m_pContent = AllocatorInterface::template New<T>(std::forward<Arg>(arg)...);
 			GetGlobalVariableManager().Insert(this);
 		}
 

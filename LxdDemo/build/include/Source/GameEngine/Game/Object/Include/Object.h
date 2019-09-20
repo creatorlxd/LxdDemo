@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 Copyright 2018 creatorlxd
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,8 +28,8 @@ namespace SpaceGameEngine
 		template<typename... Arg>
 		DoubleBuffer(Arg&&... arg)
 		{
-			m_pNow = AllocatorInterface::New<T>(std::forward<Arg>(arg)...);
-			m_pLast = AllocatorInterface::NewSize<T>(sizeof(T));
+			m_pNow = AllocatorInterface::template New<T>(std::forward<Arg>(arg)...);
+			m_pLast = AllocatorInterface::template NewSize<T>(sizeof(T));
 			memcpy(m_pLast, m_pNow, sizeof(T));
 		}
 		~DoubleBuffer()
@@ -59,7 +59,7 @@ namespace SpaceGameEngine
 
 	class RenderObject;
 
-	Vector<std::pair<String, std::pair<String, int>>> ReadAssetListFromFile(const String& filename);	//´ÓÎÄ¼şÖĞ¶ÁÈ¡×Ê²úÎÄ¼şÁĞ±í
+	Vector<std::pair<String, std::pair<String, int>>> ReadAssetListFromFile(const String& filename);	//ä»æ–‡ä»¶ä¸­è¯»å–èµ„äº§æ–‡ä»¶åˆ—è¡¨
 
 	enum ObjectMode :uint32_t
 	{
@@ -67,37 +67,37 @@ namespace SpaceGameEngine
 		Render = 1
 	};
 
-	class Object			//»ù±¾ÎïÌå¶ÔÏó
+	class Object			//åŸºæœ¬ç‰©ä½“å¯¹è±¡
 	{
 	public:
 		Object();
 		~Object();
-		Component* GetComponent(const String& name);		//»ñÈ¡×é¼şµÄÖ¸Õë
+		Component* GetComponent(const String& name);		//è·å–ç»„ä»¶çš„æŒ‡é’ˆ
 		template<typename T>
 		T* GetComponent();
 		/*
-		Ìí¼Ó×é¼ş£¬²¢²»Á¬½Ó
-		×¢Òâ£ºÈç¹ûÊÇÔÚSceneÔËĞĞ¹ı³ÌÖĞÌí¼ÓµÄ£¬²¢ÇÒ¸ÃObjectÊÇÔÚScene¿ªÊ¼ÔËĞĞÖ®Ç°¾ÍÒÑ¾­´´½¨ºÃµÄ£¬ÔòÓ¦ÊÖ¶¯µ÷ÓÃ¸ÃComponentdµÄStart·½·¨
+		æ·»åŠ ç»„ä»¶ï¼Œå¹¶ä¸è¿æ¥
+		æ³¨æ„ï¼šå¦‚æœæ˜¯åœ¨Sceneè¿è¡Œè¿‡ç¨‹ä¸­æ·»åŠ çš„ï¼Œå¹¶ä¸”è¯¥Objectæ˜¯åœ¨Sceneå¼€å§‹è¿è¡Œä¹‹å‰å°±å·²ç»åˆ›å»ºå¥½çš„ï¼Œåˆ™åº”æ‰‹åŠ¨è°ƒç”¨è¯¥Componentdçš„Startæ–¹æ³•
 		*/
-		bool AddComponent(Component* pc);						
-		bool DeleteComponent(const String& name);			//É¾³ı×é¼ş£¬²¢È¥³ıÁ¬½Ó
+		bool AddComponent(Component* pc);
+		bool DeleteComponent(const String& name);			//åˆ é™¤ç»„ä»¶ï¼Œå¹¶å»é™¤è¿æ¥
 
-		void Start();											//¿ªÊ¼Ê±ÔËĞĞ
-		void InitFromFile(const Vector<std::pair<String, std::pair<String, int>>>& filenames);	//´ÓÎÄ¼ş³õÊ¼»¯
-		void InitFromFile(const String& filename);										//Í¨¹ı×Ê²úÎÄ¼şÁĞ±íÀ´³õÊ¼»¯
+		void Start();											//å¼€å§‹æ—¶è¿è¡Œ
+		void InitFromFile(const Vector<std::pair<String, std::pair<String, int>>>& filenames);	//ä»æ–‡ä»¶åˆå§‹åŒ–
+		void InitFromFile(const String& filename);										//é€šè¿‡èµ„äº§æ–‡ä»¶åˆ—è¡¨æ¥åˆå§‹åŒ–
 		void InitFromXMLFile(const String& filename);
-		void Run(float DeltaTime);								//Ã¿Ö¡ÔËĞĞÊ±µÄ²Ù×÷
+		void Run(float DeltaTime);								//æ¯å¸§è¿è¡Œæ—¶çš„æ“ä½œ
 		void EveryFrameCleanUp();
 
-		bool SetRootComponent(const String& name);			//ÉèÖÃ¸ù×é¼ş
-		Component* GetRootComponent();							//»ñÈ¡¸ù×é¼ş
+		bool SetRootComponent(const String& name);			//è®¾ç½®æ ¹ç»„ä»¶
+		Component* GetRootComponent();							//è·å–æ ¹ç»„ä»¶
 
-		bool IfRun();						//ÊÇ·ñÃ¿Ö¡ÔËĞĞ
-		bool IfUse();						//ÊÇ·ñÊ¹ÓÃ
-		void ChangeIfRun(bool b);			//¸ü¸ÄÃ¿Ö¡ÊÇ·ñÔËĞĞ
-		void ChangeIfUse(bool b);			//¸ü¸ÄÊÇ·ñÊ¹ÓÃ
-		
-		void ClearRunState();				//½«m_IfRunÉèÎªfalse
+		bool IfRun();						//æ˜¯å¦æ¯å¸§è¿è¡Œ
+		bool IfUse();						//æ˜¯å¦ä½¿ç”¨
+		void ChangeIfRun(bool b);			//æ›´æ”¹æ¯å¸§æ˜¯å¦è¿è¡Œ
+		void ChangeIfUse(bool b);			//æ›´æ”¹æ˜¯å¦ä½¿ç”¨
+
+		void ClearRunState();				//å°†m_IfRunè®¾ä¸ºfalse
 		bool GetIfHaveRun();
 
 		void ProduceMessage(Component* from, unsigned int message);
@@ -127,27 +127,27 @@ namespace SpaceGameEngine
 		ObjectMode GetMode();
 	private:
 		void Attach(Object* po);
-		void Discon();						//¶Ï¿ª
+		void Discon();						//æ–­å¼€
 		/*
-		×÷Îª×Ó×é¼şËùÒª½øĞĞµÄ¸üĞÂ·½·¨¡£
+		ä½œä¸ºå­ç»„ä»¶æ‰€è¦è¿›è¡Œçš„æ›´æ–°æ–¹æ³•ã€‚
 		state:
 			0:connect state
 			1:update state
 		*/
 		void ChildObjectUpdate(int state);
 	protected:
-		Map<String, Component*> m_Components;			//×é¼şÃÇ...
-		Component* m_pRootComponent;							//¸ù×é¼ş
+		Map<String, Component*> m_Components;			//ç»„ä»¶ä»¬...
+		Component* m_pRootComponent;							//æ ¹ç»„ä»¶
 		Map<unsigned int, Component*> m_Message;
-		Object* m_pFather;									//¸¸¶ÔÏó
-		Vector<Object*> m_Children;							//×Ó¶ÔÏó
-		RenderObject* m_pRenderObject;						//äÖÈ¾¶ÔÏó
+		Object* m_pFather;									//çˆ¶å¯¹è±¡
+		Vector<Object*> m_Children;							//å­å¯¹è±¡
+		RenderObject* m_pRenderObject;						//æ¸²æŸ“å¯¹è±¡
 		Vector<Object*> m_RequiredObject;
 
-		bool m_IfHaveRun;										//ÊÇ·ñÒÑ¾­Run¹ıÁË
-		bool m_IfUse;											//ÊÇ·ñÊ¹ÓÃ
-		bool m_IfRun;											//ÊÇ·ñÃ¿Ö¡ÔËĞĞ
-		bool m_IfChild;											//ÊÇ·ñÊÇ×Ó¶ÔÏó
+		bool m_IfHaveRun;										//æ˜¯å¦å·²ç»Runè¿‡äº†
+		bool m_IfUse;											//æ˜¯å¦ä½¿ç”¨
+		bool m_IfRun;											//æ˜¯å¦æ¯å¸§è¿è¡Œ
+		bool m_IfChild;											//æ˜¯å¦æ˜¯å­å¯¹è±¡
 		ObjectMode m_Mode;
 
 		XMFLOAT3 m_PositionBuffer;
@@ -158,12 +158,12 @@ namespace SpaceGameEngine
 		bool m_IfSyncTransform;
 	};
 
-	void RunComponentOnTree(Component* node, float DeltaTime);	//ÔÚÊ÷ÉÏÔËĞĞ×é¼ş(DFS)
+	void RunComponentOnTree(Component* node, float DeltaTime);	//åœ¨æ ‘ä¸Šè¿è¡Œç»„ä»¶(DFS)
 
 	template<typename T>
 	inline T * Object::GetComponent()
 	{
 		return dynamic_cast<T*>(GetComponent(T::GetComponentFactory().m_Name));
 	}
-	
+
 }
