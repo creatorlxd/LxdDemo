@@ -260,5 +260,5 @@ paket-files/
 __pycache__/
 *.pyc
 
-!LxdDemo/build/lib
-!LxdDemo/build/include/Source/GameEngine/ThirdParty/
+!/LxdDemo/build/lib
+!/LxdDemo/build/include/Source/GameEngine/ThirdParty/
