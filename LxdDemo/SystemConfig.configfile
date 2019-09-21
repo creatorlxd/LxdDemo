@@ -8,11 +8,4 @@ ShaderDirectory="./build/include/Source/GameEngine/Shader/"
 RenderQuality=2
 
 [Window]
-IconFileName=""
-WindowWidth=800
-WindowHeight=600
-WindowTitle="LxdDemo"
-WindowPositionX=250
-WindowPositionY=100
-IfShowCursor=true
 FPSLimit=120

@@ -1,4 +1,4 @@
-/*
+ï»¿/*
 Copyright 2018 creatorlxd
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,23 +17,23 @@ limitations under the License.
 #include "ComponentInformationManager.h"
 
 /*
-REGISTER_COMPONENT±ØĞëÒª±»Ê¹ÓÃÔÚComponent×ÓÀàµÄpublicÓòÖĞ
+REGISTER_COMPONENTå¿…é¡»è¦è¢«ä½¿ç”¨åœ¨Componentå­ç±»çš„publicåŸŸä¸­
 */
 #define REGISTER_COMPONENT(classname)	\
 static SpaceGameEngine::ComponentFactory<classname>& GetComponentFactory()\
 {\
-	static GlobalVariable<ComponentFactory<classname>> g_ComponentFactory(STRING(classname));\
+	static SpaceGameEngine::GlobalVariable<SpaceGameEngine::ComponentFactory<classname>> g_ComponentFactory(STRING(classname));\
 	return g_ComponentFactory.Get();\
 }\
 static SpaceGameEngine::Component* NewComponent(){return GetComponentFactory()();}\
 private:\
-inline static ComponentFactory<classname>& sm_ComponentFactory=GetComponentFactory();\
+inline static SpaceGameEngine::ComponentFactory<classname>& sm_ComponentFactory=GetComponentFactory();\
 public:
 
 namespace SpaceGameEngine
 {
 	template<typename T>
-	struct ComponentFactory							//´´½¨Ò»¸ö×é¼ş
+	struct ComponentFactory							//åˆ›å»ºä¸€ä¸ªç»„ä»¶
 	{
 		String m_Name;
 		ComponentFactory(const String& name);
