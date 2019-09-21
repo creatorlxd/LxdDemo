@@ -260,4 +260,5 @@ paket-files/
 __pycache__/
 *.pyc
 
-!*.lib
+!/build/lib
+!/build/include/Source/GameEngine/ThirdParty/
