@@ -116,21 +116,31 @@ void ControllerComponent::Run(float DeltaTime)
 	GetGameplay().Run(DeltaTime);
 }
 
-void Gameplay::Init(Object* player)
+void Gameplay::Init(const SpaceGameEngine::Queue<SpaceGameEngine::String>&level_list)
 {
-	m_pPlayer = CreateVisibleObject("PlayerBlock");
-	BuildBlockObject(m_pPlayer, GetRealPosition(1, 1, 1), "./Asset/player.dds");
-	m_pPlayer->RequireObject(player);
-	m_pPlayerController = player;
+	m_LevelList = level_list;
+	LoadLevel(m_LevelList.front());
+	m_LevelList.pop();
 }
 
 void Gameplay::LoadLevel(const SpaceGameEngine::String & filename)
 {
+	static bool is_first = true;
+	auto pscene = MemoryManager::New<Scene>();
+	pscene->SetAsMainScene();
+	m_Scenes.push_back(pscene);
+	m_pPlayerController = CreatePlayerObject();
+	m_pPlayer = CreateVisibleObject("PlayerBlock");
+	BuildBlockObject(m_pPlayer, GetRealPosition(1, 1, 1), "./Asset/player.dds");
+	m_pPlayer->RequireObject(m_pPlayerController);
+	CreateLight("WorldLight", "./Asset/world.light");
 	m_InputBuffer = Direction::Null;
-	m_Score = 0;
-	m_PlayerPosition = { 7,3 };
+	m_PlayerPosition = { 1,1 };
 	m_pPlayer->GetComponent<TransformComponent>()->SetPosition(GetRealPosition(m_PlayerPosition.first, m_PlayerPosition.second, 1));
 	memset(m_Boxes, NULL, sizeof(m_Boxes));
+	memset(m_Ground, NULL, sizeof(m_Ground));
+	memset(m_Front, NULL, sizeof(m_Front));
+	m_Destinations.clear();
 	Vector<std::pair<XMFLOAT3, String>> data;
 	Queue<int> indexs;
 	File file(filename, FileMode::Read);
@@ -141,7 +151,7 @@ void Gameplay::LoadLevel(const SpaceGameEngine::String & filename)
 			if (m_Ground[i][j] != BlockType::Empty)
 				data.push_back({ GetRealPosition(j,i,0) , GetTexture(m_Ground[i][j]) });
 			if (m_Ground[i][j] == BlockType::Destination)
-				m_Destination += 1;
+				m_Destinations.push_back({ i,j });
 		}
 	for (int i = 0; i < 11; i++)
 		for (int j = 0; j < 11; j++)
@@ -163,15 +173,58 @@ void Gameplay::LoadLevel(const SpaceGameEngine::String & filename)
 				indexs.pop();
 			}
 		}
+	if (is_first)
+	{
+		GetGame()->SetScene(pscene);
+		is_first = false;
+	}
+	else
+		GetGame()->ChangeScene(pscene);
 }
 
 void Gameplay::Run(float deltatime)
 {
-	static const float circle = 0.3;
+	static const float circle = 0.1;
 	static float time_cot = 0;
 	if (time_cot + deltatime >= circle)
 	{
 		time_cot = 0;
+		bool if_win = true;
+		for (auto iter : m_Destinations)
+		{
+			if (!m_Boxes[iter.first][iter.second])
+			{
+				if_win = false;
+				break;
+			}
+		}
+		if (if_win)
+		{
+			MessageBox(NULL, L"You win!!!", L"LxdDemo", NULL);
+			if (!m_LevelList.empty())
+			{
+				/*int cot = 0;
+				for (int i = 0; i < 11; i++)
+					for (int j = 0; j < 11; j++)
+					{
+						if (m_Ground[i][j] != BlockType::Empty)
+							GetScene()->DeleteObject(("Block" + std::to_string(cot++)).data());
+					}
+				for (int i = 0; i < 11; i++)
+					for (int j = 0; j < 11; j++)
+					{
+						if (m_Front[i][j] != BlockType::Empty)
+							GetScene()->DeleteObject(("Block" + std::to_string(cot++)).data());
+					}*/
+				LoadLevel(m_LevelList.front());
+				m_LevelList.pop();
+				return;
+			}
+			else
+			{
+				GetGame()->ExitGame();
+			}
+		}
 		switch (m_InputBuffer)
 		{
 		case Gameplay::Direction::Left:
@@ -283,14 +336,32 @@ void Gameplay::Run(float deltatime)
 	{
 		time_cot += deltatime;
 		if (Game::GetMainGame()->m_KeyboardDevice.IfPress(KEY(W)))
+		{
 			m_InputBuffer = Direction::Up;
+			time_cot = 0;
+		}
 		if (Game::GetMainGame()->m_KeyboardDevice.IfPress(KEY(S)))
+		{
 			m_InputBuffer = Direction::Down;
+			time_cot = 0;
+		}
 		if (Game::GetMainGame()->m_KeyboardDevice.IfPress(KEY(A)))
+		{
 			m_InputBuffer = Direction::Left;
+			time_cot = 0;
+		}
 		if (Game::GetMainGame()->m_KeyboardDevice.IfPress(KEY(D)))
+		{
 			m_InputBuffer = Direction::Right;
+			time_cot = 0;
+		}
 	}
+}
+
+Gameplay::~Gameplay()
+{
+	for (auto i : m_Scenes)
+		MemoryManager::Delete(i);
 }
 
 SpaceGameEngine::String Gameplay::GetTexture(BlockType type)

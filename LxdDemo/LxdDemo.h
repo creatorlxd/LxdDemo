@@ -45,20 +45,23 @@ public:
 		Up = 2,
 		Right = 3
 	};
-	void Init(SpaceGameEngine::Object* player);
+	void Init(const SpaceGameEngine::Queue<SpaceGameEngine::String>& level_list);
 	void LoadLevel(const SpaceGameEngine::String& filename);
 	void Run(float deltatime);
+	~Gameplay();
 private:
 	SpaceGameEngine::String GetTexture(BlockType type);
 	XMFLOAT3 GetRealPosition(int x, int y, int high);
 	SpaceGameEngine::Object* m_Boxes[11][11];
 	BlockType m_Ground[11][11];
 	BlockType m_Front[11][11];
-	int m_Score, m_Destination;
 	std::pair<int, int> m_PlayerPosition;
 	SpaceGameEngine::Object* m_pPlayer;
 	Direction m_InputBuffer;
 	SpaceGameEngine::Object* m_pPlayerController;
+	SpaceGameEngine::Vector<std::pair<int, int>> m_Destinations;
+	SpaceGameEngine::Queue<SpaceGameEngine::String> m_LevelList;
+	SpaceGameEngine::Vector<SpaceGameEngine::Scene*> m_Scenes;
 };
 
 Gameplay& GetGameplay();
